@@ -1,0 +1,47 @@
+name: CI/CD pipeline for frontend app
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend.yml"
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    name: Build Frondend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependency
+        run: yarn install
+        working-directory: frontend/
+
+      - name: Run Lint Check
+        run: yarn lint
+        working-directory: frontend/
+
+      - name: Run Tests
+        run: yarn test
+        working-directory: frontend/
+
+      # - name: Docker login
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_TOKEN }}
+          
+      # - name: Build and push
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: frontend/
+      #     push: true
+      #     tags: rumesha/contact-hub-frontend:latest
